@@ -1,0 +1,44 @@
+DROP SEQUENCE customer_id_seq
+CREATE SEQUENCE customer_id_seq START 101
+DROP SEQUENCE orders_id_seq
+CREATE SEQUENCE orders_id_seq START 101
+DROP SEQUENCE products_id_seq
+CREATE SEQUENCE products_id_seq START 101
+DROP SEQUENCE properties_id_seq
+CREATE SEQUENCE properties_id_seq START 101
+DROP VIEW magazine_property_items
+CREATE VIEW magazine_property_items AS SELECT p.image, p.town, p.bedrooms, p.baths, p.square_footage, p.subdivision, p.description, p.price, c.daytime_phone_number, c.evening_phone_number FROM properties p, customers c WHERE p.customer_id = c.id
+DROP VIEW internet_ad_items
+CREATE VIEW internet_ad_items AS SELECT p.id, p.image, p.town, p.bedrooms, p.baths, p.style, p.square_footage, p.subdivision, p.description, p.price, c.daytime_phone_number, c.evening_phone_number, c.email FROM properties p, customers c WHERE p.customer_id = c.id
+DROP FUNCTION products_id_max()
+CREATE FUNCTION products_id_max() RETURNS TEXT AS 'SELECT max(id) FROM products' LANGUAGE 'sql'
+BEGIN
+DELETE FROM products
+COPY products FROM '${PWD}/products.dat' USING DELIMITERS ','
+SELECT setval('products_id_seq', int4(products_id_max()))
+END
+BEGIN
+DELETE FROM sales_tax_by_state
+COPY sales_tax_by_state FROM '${PWD}/sales_tax_by_state.dat' USING DELIMITERS ','
+END
+BEGIN
+DELETE FROM payment_methods
+COPY payment_methods FROM '${PWD}/payment_methods.dat' USING DELIMITERS ','
+END
+BEGIN
+DELETE FROM shipping_methods
+COPY shipping_methods FROM '${PWD}/shipping_methods.dat' USING DELIMITERS ','
+END
+BEGIN
+DELETE FROM order_status_values
+COPY order_status_values FROM '${PWD}/order_status_values.dat' USING DELIMITERS ','
+END
+BEGIN
+DELETE FROM product_categories
+COPY product_categories FROM '${PWD}/product_categories.dat' USING DELIMITERS ','
+END
+BEGIN
+DELETE FROM market_status_values
+COPY market_status_values FROM '${PWD}/market_status_values.dat' USING DELIMITERS ','
+END
+INSERT INTO store_info (id) VALUES ('1')
